@@ -59,14 +59,13 @@
         @endif
 
         <!-- Teacher Section -->
-        {{-- In sidebar.blade.php --}}
-        {{-- Teacher Section --}}
         @if(auth()->user()->role === 'teacher')
         <div class="pt-4 pb-2">
             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Teaching</p>
         </div>
 
-        <a href="{{ route('attendance.index') }}"
+        <!-- Note: Using full URL for teacher routes since they're prefixed -->
+        <a href="{{ url('/teacher/attendance') }}"
             class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->is('teacher/attendance*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : '' }}">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -74,15 +73,30 @@
             Mark Attendance
         </a>
 
-        {{-- ... other teacher links --}}
+        <a href="{{ url('/teacher/assignments') }}"
+            class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->is('teacher/assignments*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : '' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Assignments
+        </a>
+
+        <a href="{{ url('/teacher/quizzes') }}"
+            class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->is('teacher/quizzes*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : '' }}">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Quizzes
+        </a>
         @endif
 
-        {{-- Student Section --}}
+        <!-- Student Section -->
         @if(auth()->user()->role === 'student')
         <div class="pt-4 pb-2">
             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">My Activities</p>
         </div>
 
+        <!-- Note: Using route names for student routes since they have named routes -->
         <a href="{{ route('student.attendance') }}"
             class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->is('student/attendance*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : '' }}">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,34 +121,6 @@
             My Quizzes
         </a>
         @endif
-
-        <!-- Show ALL links for ALL roles (Alternative version if you want to see all pages) -->
-        {{--
-        <div class="pt-4 pb-2">
-            <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">All Pages</p>
-        </div>
-        
-        <!-- Admin Pages -->
-        @if(auth()->user()->role === 'admin')
-        <a href="/timetables" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Timetable</a>
-        <a href="/notices" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Notices</a>
-        <a href="/fees" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Fees</a>
-        @endif
-        
-        <!-- Teacher Pages -->
-        @if(auth()->user()->role === 'teacher')
-        <a href="/attendance" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Mark Attendance</a>
-        <a href="/assignments" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Assignments</a>
-        <a href="/quizzes" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Quizzes</a>
-        @endif
-        
-        <!-- Student Pages -->
-        @if(auth()->user()->role === 'student')
-        <a href="/attendance" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">My Attendance</a>
-        <a href="/assignments" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">Assignments</a>
-        <a href="/quizzes" class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">My Quizzes</a>
-        @endif
-        --}}
 
     </nav>
 
