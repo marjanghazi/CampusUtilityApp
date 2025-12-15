@@ -21,7 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,4 +43,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isTeacher()
+    {
+        return $this->role === 'teacher';
+    }
+
+    public function isStudent()
+    {
+        return $this->role === 'student';
+    }
 }
