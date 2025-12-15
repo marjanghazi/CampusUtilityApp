@@ -67,26 +67,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('quizzes', QuizController::class);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Teacher Routes
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
-
-    /* Attendance */
-    Route::resource('attendance', AttendanceController::class);
-    
-    /* Bulk attendance marking */
-    Route::post('attendance/bulk', [AttendanceController::class, 'bulkMark'])
-        ->name('attendance.bulk');
-
-    /* Assignments */
-    Route::resource('assignments', AssignmentController::class);
-
-    /* Quizzes */
-    Route::resource('quizzes', QuizController::class);
-});
+// ... existing routes ...
 
 /*
 |--------------------------------------------------------------------------
@@ -102,8 +83,11 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     /* Assignments */
     Route::get('assignments', [AssignmentController::class, 'index'])
         ->name('student.assignments');
-
-    Route::post('assignments/upload', [AssignmentController::class, 'upload'])
+        
+    Route::get('assignments/{id}', [AssignmentController::class, 'showAssignment'])
+        ->name('student.assignments.show');
+        
+    Route::post('assignments/{id}/upload', [AssignmentController::class, 'upload'])
         ->name('student.assignments.upload');
 
     /* Quizzes */
@@ -115,6 +99,25 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
         ->name('student.gpa');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Teacher Assignment Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
+    // ... other teacher routes ...
+    
+    Route::get('assignments/{id}/submissions', [AssignmentController::class, 'showSubmissions'])
+        ->name('teacher.assignments.submissions');
+        
+    Route::post('submissions/{id}/grade', [AssignmentController::class, 'gradeSubmission'])
+        ->name('teacher.submissions.grade');
+        
+    Route::get('submissions/{id}/download', [AssignmentController::class, 'downloadSubmission'])
+        ->name('teacher.submissions.download');
+});
+
+// ... rest of the routes ...
 /*
 |--------------------------------------------------------------------------
 | Breeze Auth Routes
