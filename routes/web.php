@@ -75,8 +75,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
 
     /* Attendance */
-    Route::resource('attendance', AttendanceController::class)
-        ->except(['show']);
+    Route::resource('attendance', AttendanceController::class);
+    
+    /* Bulk attendance marking */
+    Route::post('attendance/bulk', [AttendanceController::class, 'bulkMark'])
+        ->name('attendance.bulk');
 
     /* Assignments */
     Route::resource('assignments', AssignmentController::class);
@@ -93,7 +96,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function (
 Route::middleware(['auth', 'role:student'])->prefix('student')->group(function () {
 
     /* Attendance (View only) */
-    Route::get('attendance', [AttendanceController::class, 'index'])
+    Route::get('attendance', [AttendanceController::class, 'studentIndex'])
         ->name('student.attendance');
 
     /* Assignments */
