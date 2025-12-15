@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('title', 'Manage Attendance')
-
+@php
+    $attendances = $attendances ?? collect([]);
+@endphp
 @php
 $pageTitle = 'Manage Attendance';
 $pageSubtitle = 'Mark and manage student attendance';

@@ -205,6 +205,9 @@ class AttendanceController extends Controller
         
         // Group by subject
         $attendancesBySubject = $attendances->groupBy('subject.name');
+           $attendances = Attendance::with('user')
+        ->where('teacher_id', auth()->id())
+        ->get();
         
         return view('student.attendance', compact(
             'attendances',
@@ -212,7 +215,9 @@ class AttendanceController extends Controller
             'totalClasses',
             'totalAttended',
             'totalMissed',
-            'overallPercentage'
+            'overallPercentage',
+            'attendances'
+
         ));
     }
 }

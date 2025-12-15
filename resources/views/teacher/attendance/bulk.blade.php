@@ -38,7 +38,7 @@
                             id="bulk-department-select">
                         <option value="">Select Department</option>
                         @foreach($departments as $department)
-                            <option value="{{ $department->id }}">
+                            <option value="{{ $department->id }}" data-code="{{ $department->code }}">
                                 {{ $department->name }} ({{ $department->code }})
                             </option>
                         @endforeach
@@ -132,16 +132,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const departmentSelect = document.getElementById('bulk-department-select');
     const subjectSelect = document.getElementById('bulk-subject-select');
     const studentsContainer = document.getElementById('students-container');
+
+    // Convert PHP data to JavaScript safely
+    const studentsByDepartment = @json($studentsByDepartment ?? []);
+    const departments = @json($departments ?? []);
+    const allStudents = @json($students ?? []);
     
+    console.log('studentsByDepartment:', studentsByDepartment);
+    console.log('departments:', departments);
+    console.log('allStudents:', allStudents);
+
     // Filter subjects based on selected department
     departmentSelect.addEventListener('change', function() {
         const departmentId = this.value;
-        
+        const selectedOption = this.options[this.selectedIndex];
+        const departmentCode = selectedOption.dataset.code;
+
+        console.log('Selected Department ID:', departmentId);
+        console.log('Selected Department Code:', departmentCode);
+
         // Enable/disable subject options
         Array.from(subjectSelect.options).forEach(option => {
             if (option.value === '') return;
-            
-            if (option.dataset.department === departmentId) {
+
+            if (option.dataset.department == departmentId) {
                 option.hidden = false;
                 option.disabled = false;
             } else {
@@ -149,33 +163,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 option.disabled = true;
             }
         });
-        
+
         // Reset subject selection
         subjectSelect.value = '';
-        
+
         // Load students for this department
-        loadStudents(departmentId);
+        loadStudents(departmentId, departmentCode);
     });
-    
-    function loadStudents(departmentId) {
-        // Get students data from PHP variable passed to view
-        const studentsByDepartment = @json($students->toArray());
+
+    function loadStudents(departmentId, departmentCode) {
+        console.log('Loading students for:', departmentCode);
         
-        // Find department code
-        let departmentCode = '';
-        @foreach($departments as $dept)
-            if ({{ $dept->id }} == departmentId) {
-                departmentCode = '{{ $dept->code }}';
-            }
-        @endforeach
+        if (!departmentId) {
+            studentsContainer.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        Select a department to load students
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Try to get students from studentsByDepartment
+        let departmentStudents = [];
         
+        if (studentsByDepartment[departmentCode] && Array.isArray(studentsByDepartment[departmentCode])) {
+            departmentStudents = studentsByDepartment[departmentCode];
+        } else if (studentsByDepartment[""] && Array.isArray(studentsByDepartment[""])) {
+            // If grouped with empty string key, filter by department
+            departmentStudents = studentsByDepartment[""].filter(student => {
+                return student.department === departmentCode;
+            });
+        } else {
+            // Fallback to allStudents
+            departmentStudents = allStudents.filter(student => {
+                return student.department === departmentCode;
+            });
+        }
+
+        console.log('Filtered students:', departmentStudents);
+
         // Clear container
         studentsContainer.innerHTML = '';
-        
-        if (departmentCode && studentsByDepartment[departmentCode]) {
-            const students = studentsByDepartment[departmentCode];
-            
-            students.forEach((student, index) => {
+
+        if (departmentStudents.length > 0) {
+            departmentStudents.forEach((student, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 row.innerHTML = `
@@ -187,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="text-xs text-gray-500">${student.email}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${student.department}
+                        ${student.department || departmentCode}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <select name="attendance[${index}][status]" required
