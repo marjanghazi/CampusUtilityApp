@@ -64,7 +64,6 @@
             <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Teaching</p>
         </div>
 
-        <!-- Note: Using full URL for teacher routes since they're prefixed -->
         <a href="{{ url('/teacher/attendance') }}"
             class="flex items-center p-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->is('teacher/attendance*') ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600' : '' }}">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

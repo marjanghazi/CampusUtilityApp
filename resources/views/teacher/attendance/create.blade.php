@@ -12,7 +12,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-semibold text-gray-800 mb-6">Mark Attendance</h2>
         
-        <form action="{{ route('attendance.store') }}" method="POST">
+<form action="{{ route('teacher.attendance.store') }}" method="POST">
             @csrf
             
             <div class="space-y-4">
@@ -67,7 +67,7 @@
 
             <!-- Actions -->
             <div class="flex justify-end space-x-3 mt-8 pt-6 border-t">
-                <a href="{{ route('attendance.index') }}" 
+<a href="{{ route('teacher.attendance.index') }}" 
                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
                     Cancel
                 </a>

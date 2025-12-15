@@ -106,7 +106,19 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
-    // ... other teacher routes ...
+    /* Attendance */
+    Route::resource('attendance', AttendanceController::class);
+
+    /* Bulk attendance marking */
+    Route::post('attendance/bulk', [AttendanceController::class, 'bulkMark'])
+        ->name('attendance.bulk');
+
+    /* Assignments */
+    Route::resource('assignments', AssignmentController::class);
+
+    /* Quizzes */
+    Route::resource('quizzes', QuizController::class);
+
 
     Route::get('assignments/{id}/submissions', [AssignmentController::class, 'showSubmissions'])
         ->name('teacher.assignments.submissions');
