@@ -1,17 +1,15 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
+@section('content')
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4">Campus Utility Dashboard</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="/timetable" class="bg-blue-500 text-white p-4 rounded">Timetable</a>
+        <a href="/gpa" class="bg-green-500 text-white p-4 rounded">GPA Calculator</a>
+        <a href="/attendance" class="bg-yellow-500 text-white p-4 rounded">Attendance</a>
+        <a href="/notice" class="bg-purple-500 text-white p-4 rounded">Notices</a>
+        <a href="/fee" class="bg-red-500 text-white p-4 rounded">Fees</a>
     </div>
-</x-app-layout>
+</div>
+@endsection
