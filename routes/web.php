@@ -109,12 +109,16 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     /* Attendance */
     Route::resource('attendance', AttendanceController::class);
 
-    /* Bulk attendance marking */
-    Route::post('attendance/bulk', [AttendanceController::class, 'bulkMark'])
-        ->name('attendance.bulk');
+      /* Bulk attendance marking */
+    Route::get('attendance/bulk', [AttendanceController::class, 'bulkCreate'])
+        ->name('attendance.bulk.create');
+        
+    Route::post('attendance/bulk', [AttendanceController::class, 'bulkStore'])
+        ->name('attendance.bulk.store');
 
     /* Assignments */
     Route::resource('assignments', AssignmentController::class);
+    
 
     /* Quizzes */
     Route::resource('quizzes', QuizController::class);

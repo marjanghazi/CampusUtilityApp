@@ -180,4 +180,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.className = 'hover:bg-gray-50';
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">
+                        <div class="text-sm font-medium text-gray-900">${student.roll_number || 'N/A'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${student.name}</div>
+                        <div class="text-xs text-gray-500">${student.email}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${student.department}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <select name="attendance[${index}][status]" required
+                                class="border rounded-lg px-3 py-1 text-sm">
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="hidden" name="attendance[${index}][student_id]" value="${student.id}">
+                        <input type="text" name="attendance[${index}][remarks]"
+                               class="border rounded-lg px-3 py-1 text-sm w-full"
+                               placeholder="Remarks (optional)">
+                    </td>
+                `;
+                studentsContainer.appendChild(row);
+            });
+        } else {
+            studentsContainer.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        No students found in this department
+                    </td>
+                </tr>
+            `;
+        }
+    }
+});
+</script>
+@endpush
+@endsection
