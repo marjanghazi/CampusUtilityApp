@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('fees', function (Blueprint $table) {
             $table->id();
+            $table->decimal('amount');
+            $table->string('status');
+            $table->date('due_date');
             $table->timestamps();
         });
     }
