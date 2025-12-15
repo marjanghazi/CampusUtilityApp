@@ -46,6 +46,24 @@ Route::middleware('auth')->group(function () {
     Route::resource('notices', NoticeController::class);
     Route::resource('fees', FeeController::class);
 });
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('notice', NoticeController::class);
+    Route::resource('fee', FeeController::class);
+    Route::resource('timetable', TimetableController::class);
+});
+
+Route::middleware(['auth', 'role:teacher'])->group(function () {
+    Route::resource('attendance', AttendanceController::class)->except(['show']);
+    Route::resource('assignment', AssignmentController::class);
+    Route::resource('quiz', QuizController::class);
+});
+
+Route::middleware(['auth', 'role:student'])->group(function () {
+    Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('assignment', [AssignmentController::class, 'index'])->name('assignment.index');
+    Route::post('assignment/upload', [AssignmentController::class, 'upload'])->name('assignment.upload');
+    Route::get('quiz', [QuizController::class, 'index'])->name('quiz.index');
+});
 
 /*
 |--------------------------------------------------------------------------
