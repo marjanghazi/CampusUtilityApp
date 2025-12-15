@@ -7,67 +7,114 @@ use App\Http\Controllers\GPAController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\FeeController;
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\QuizController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Public Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     return view('welcome');
 });
 
-/*asdasdadasd
+/*
 |--------------------------------------------------------------------------
-| Dashboard
+| Dashboard (All authenticated users)
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    $role = auth()->user()->role;
+
+    return match ($role) {
+        'admin' => view('dashboards.admin'),
+        'teacher' => view('dashboards.teacher'),
+        'student' => view('dashboards.student'),
+        default => abort(403),
+    };
+})->middleware('auth');
+
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated User Routes
+| Authenticated User (Common)
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     /* Profile */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /* Campus Utility Modules */
-    Route::resource('timetables', TimetableController::class);
-    Route::resource('gpa', GPAController::class);
-    Route::resource('attendance', AttendanceController::class);
-    Route::resource('notices', NoticeController::class);
-    Route::resource('fees', FeeController::class);
-});
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('notice', NoticeController::class);
-    Route::resource('fee', FeeController::class);
-    Route::resource('timetable', TimetableController::class);
-});
-
-Route::middleware(['auth', 'role:teacher'])->group(function () {
-    Route::resource('attendance', AttendanceController::class)->except(['show']);
-    Route::resource('assignment', AssignmentController::class);
-    Route::resource('quiz', QuizController::class);
-});
-
-Route::middleware(['auth', 'role:student'])->group(function () {
-    Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::get('assignment', [AssignmentController::class, 'index'])->name('assignment.index');
-    Route::post('assignment/upload', [AssignmentController::class, 'upload'])->name('assignment.upload');
-    Route::get('quiz', [QuizController::class, 'index'])->name('quiz.index');
+    /* GPA (Students only see data, Admin manages) */
+    Route::resource('gpa', GPAController::class)->only(['index', 'show']);
 });
 
 /*
 |--------------------------------------------------------------------------
-| Auth Routes (Breeze)
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+
+    Route::resource('timetables', TimetableController::class);
+    Route::resource('notices', NoticeController::class);
+    Route::resource('fees', FeeController::class);
+
+    Route::resource('assignments', AssignmentController::class);
+    Route::resource('quizzes', QuizController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Teacher Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
+
+    /* Attendance */
+    Route::resource('attendance', AttendanceController::class)
+        ->except(['show']);
+
+    /* Assignments */
+    Route::resource('assignments', AssignmentController::class);
+
+    /* Quizzes */
+    Route::resource('quizzes', QuizController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Student Routes
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:student'])->prefix('student')->group(function () {
+
+    /* Attendance (View only) */
+    Route::get('attendance', [AttendanceController::class, 'index'])
+        ->name('student.attendance');
+
+    /* Assignments */
+    Route::get('assignments', [AssignmentController::class, 'index'])
+        ->name('student.assignments');
+
+    Route::post('assignments/upload', [AssignmentController::class, 'upload'])
+        ->name('student.assignments.upload');
+
+    /* Quizzes */
+    Route::get('quizzes', [QuizController::class, 'index'])
+        ->name('student.quizzes');
+
+    /* GPA */
+    Route::get('gpa', [GPAController::class, 'index'])
+        ->name('student.gpa');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Breeze Auth Routes
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/auth.php';
