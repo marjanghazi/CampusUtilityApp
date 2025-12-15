@@ -105,7 +105,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
 | Teacher Assignment Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
+Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     /* Attendance */
     Route::resource('attendance', AttendanceController::class);
 
