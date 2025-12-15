@@ -15,6 +15,7 @@ use App\Http\Controllers\QuizController;
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -83,10 +84,10 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     /* Assignments */
     Route::get('assignments', [AssignmentController::class, 'index'])
         ->name('student.assignments');
-        
+
     Route::get('assignments/{id}', [AssignmentController::class, 'showAssignment'])
         ->name('student.assignments.show');
-        
+
     Route::post('assignments/{id}/upload', [AssignmentController::class, 'upload'])
         ->name('student.assignments.upload');
 
@@ -106,13 +107,13 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
 */
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->group(function () {
     // ... other teacher routes ...
-    
+
     Route::get('assignments/{id}/submissions', [AssignmentController::class, 'showSubmissions'])
         ->name('teacher.assignments.submissions');
-        
+
     Route::post('submissions/{id}/grade', [AssignmentController::class, 'gradeSubmission'])
         ->name('teacher.submissions.grade');
-        
+
     Route::get('submissions/{id}/download', [AssignmentController::class, 'downloadSubmission'])
         ->name('teacher.submissions.download');
 });
