@@ -3,8 +3,8 @@
 @section('title', 'Mark Attendance')
 
 @php
-    $pageTitle = 'Mark Attendance';
-    $pageSubtitle = 'Add attendance record';
+$pageTitle = 'Mark Attendance';
+$pageSubtitle = 'Add attendance record';
 @endphp
 
 @section('content')
@@ -17,11 +17,11 @@
                 <h2 class="text-2xl font-bold text-gray-800">Mark Attendance</h2>
                 <p class="text-gray-600">Mark attendance for a single student</p>
             </div>
-<a href="{{ route('teacher.attendance.bulk.create') }}"
-               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center">
+            <a href="{{ route('teacher.attendance.bulk.create') }}"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
                 Bulk Marking
             </a>
@@ -29,13 +29,13 @@
 
         {{-- Errors --}}
         @if($errors->any())
-            <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                <ul class="list-disc ml-5">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+            <ul class="list-disc ml-5">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
         <form action="{{ route('teacher.attendance.store') }}" method="POST">
@@ -49,12 +49,12 @@
                         Department <span class="text-red-500">*</span>
                     </label>
                     <select id="departmentSelect" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Department</option>
                         @foreach($departments as $department)
-                            <option value="{{ $department->code }}">
-                                {{ $department->name }} ({{ $department->code }})
-                            </option>
+                        <option value="{{ $department->code }}">
+                            {{ $department->name }} ({{ $department->code }})
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -65,13 +65,13 @@
                         Subject <span class="text-red-500">*</span>
                     </label>
                     <select name="subject_id" id="subjectSelect" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Subject</option>
                         @foreach($teacherSubjects as $subject)
-                            <option value="{{ $subject->id }}"
-                                    data-department="{{ $subject->department->code }}">
-                                {{ $subject->name }} ({{ $subject->code }})
-                            </option>
+                        <option value="{{ $subject->id }}"
+                            data-department="{{ $subject->department->code }}">
+                            {{ $subject->name }} ({{ $subject->code }})
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -82,14 +82,14 @@
                         Student <span class="text-red-500">*</span>
                     </label>
                     <select name="student_id" id="studentSelect" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Student</option>
                         @foreach($students as $student)
-                            <option value="{{ $student->id }}"
-                                    data-department="{{ $student->department }}">
-                                {{ $student->name }}
-                                ({{ $student->roll_number ?? 'N/A' }}) – {{ $student->department }}
-                            </option>
+                        <option value="{{ $student->id }}"
+                            data-department="{{ $student->department }}">
+                            {{ $student->name }}
+                            ({{ $student->roll_number ?? 'N/A' }}) – {{ $student->department }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -100,8 +100,8 @@
                         Date <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="date" required
-                           value="{{ now()->format('Y-m-d') }}"
-                           class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        value="{{ now()->format('Y-m-d') }}"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                 </div>
 
                 {{-- Status --}}
@@ -110,7 +110,7 @@
                         Status <span class="text-red-500">*</span>
                     </label>
                     <select name="status" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="present">Present</option>
                         <option value="absent">Absent</option>
                         <option value="late">Late</option>
@@ -123,19 +123,19 @@
                         Remarks
                     </label>
                     <textarea name="remarks" rows="3"
-                              class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500"
-                              placeholder="Optional remarks"></textarea>
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500"
+                        placeholder="Optional remarks"></textarea>
                 </div>
             </div>
 
             {{-- Actions --}}
             <div class="flex justify-end space-x-3 mt-8 pt-6 border-t">
                 <a href="{{ route('teacher.attendance.index') }}"
-                   class="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">
+                    class="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">
                     Cancel
                 </a>
                 <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                     Save Attendance
                 </button>
             </div>
@@ -145,31 +145,31 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-    const departmentSelect = document.getElementById('departmentSelect');
-    const subjectSelect = document.getElementById('subjectSelect');
-    const studentSelect = document.getElementById('studentSelect');
+        const departmentSelect = document.getElementById('departmentSelect');
+        const subjectSelect = document.getElementById('subjectSelect');
+        const studentSelect = document.getElementById('studentSelect');
 
-    departmentSelect.addEventListener('change', () => {
-        const dept = departmentSelect.value;
+        departmentSelect.addEventListener('change', () => {
+            const dept = departmentSelect.value;
 
-        // Filter subjects
-        Array.from(subjectSelect.options).forEach(opt => {
-            if (!opt.value) return;
-            opt.hidden = opt.dataset.department !== dept;
+            // Filter subjects
+            Array.from(subjectSelect.options).forEach(opt => {
+                if (!opt.value) return;
+                opt.hidden = opt.dataset.department !== dept;
+            });
+
+            // Filter students
+            Array.from(studentSelect.options).forEach(opt => {
+                if (!opt.value) return;
+                opt.hidden = opt.dataset.department !== dept;
+            });
+
+            subjectSelect.value = '';
+            studentSelect.value = '';
         });
-
-        // Filter students
-        Array.from(studentSelect.options).forEach(opt => {
-            if (!opt.value) return;
-            opt.hidden = opt.dataset.department !== dept;
-        });
-
-        subjectSelect.value = '';
-        studentSelect.value = '';
     });
-});
 </script>
 @endpush
 @endsection
