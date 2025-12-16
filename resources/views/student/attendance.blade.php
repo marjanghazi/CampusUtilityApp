@@ -101,16 +101,19 @@
                                      ($percentage >= 50 ? 'Average' : 'Low');
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                                    <span class="text-blue-600 font-bold text-sm">
-                                        {{ strtoupper(substr($attendance->subject, 0, 1)) }}
-                                    </span>
-                                </div>
-                                <div class="text-sm font-medium text-gray-900">{{ $attendance->subject }}</div>
-                            </div>
-                        </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+    <div class="flex items-center">
+        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+            <span class="text-blue-600 font-bold text-sm">
+                {{ strtoupper(substr($attendance->subject->name, 0, 1)) }}
+            </span>
+        </div>
+        <div class="text-sm font-medium text-gray-900">
+            {{ $attendance->subject->name }}
+        </div>
+    </div>
+</td>
+
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $attendance->total_classes }}</div>
                         </td>
