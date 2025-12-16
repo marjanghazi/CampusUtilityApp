@@ -142,14 +142,14 @@ class AttendanceController extends Controller
     {
         $teacher = auth()->user();
         $departments = Department::all();
-        $subjects = Subject::where('teacher_id', $teacher->id)->get();
+        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get(); // renamed for Blade
 
         $studentsByDepartment = User::where('role', 'student')
             ->with('departmentRelation')
             ->get()
             ->groupBy('department');
 
-        return view('teacher.attendance.bulk', compact('departments', 'subjects', 'studentsByDepartment'));
+        return view('teacher.attendance.bulk', compact('departments', 'teacherSubjects', 'studentsByDepartment'));
     }
 
     /**

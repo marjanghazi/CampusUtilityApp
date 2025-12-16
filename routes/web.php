@@ -36,7 +36,6 @@ Route::get('/dashboard', function () {
     };
 })->middleware('auth');
 
-
 /*
 |--------------------------------------------------------------------------
 | Authenticated User (Common)
@@ -67,8 +66,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('assignments', AssignmentController::class);
     Route::resource('quizzes', QuizController::class);
 });
-
-// ... existing routes ...
 
 /*
 |--------------------------------------------------------------------------
@@ -102,28 +99,29 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
 
 /*
 |--------------------------------------------------------------------------
-| Teacher Assignment Routes
+| Teacher Routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
-    /* Attendance */
-    Route::resource('attendance', AttendanceController::class);
 
-      /* Bulk attendance marking */
+    /* Attendance (teacher) */
+    Route::resource('attendance', AttendanceController::class)
+        ->except(['show']); // prevents Laravel from expecting a missing show() method
+
+    /* Bulk attendance marking */
     Route::get('attendance/bulk', [AttendanceController::class, 'bulkCreate'])
         ->name('attendance.bulk.create');
-        
+
     Route::post('attendance/bulk', [AttendanceController::class, 'bulkStore'])
         ->name('attendance.bulk.store');
 
     /* Assignments */
     Route::resource('assignments', AssignmentController::class);
-    
 
     /* Quizzes */
     Route::resource('quizzes', QuizController::class);
 
-
+    /* Assignment submissions & grading */
     Route::get('assignments/{id}/submissions', [AssignmentController::class, 'showSubmissions'])
         ->name('teacher.assignments.submissions');
 
@@ -134,7 +132,6 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
         ->name('teacher.submissions.download');
 });
 
-// ... rest of the routes ...
 /*
 |--------------------------------------------------------------------------
 | Breeze Auth Routes
