@@ -18,7 +18,7 @@ class AttendanceController extends Controller
         $teacherId = auth()->id();
 
         // Get all subjects for dropdown
-        $subjects = Subject::all();
+        $subjects = Subject::where('teacher_id', $teacherId)->get();
 
         // Get all attendance records for this teacher with related user & subject
         $attendances = Attendance::with(['user', 'subject'])
@@ -38,12 +38,9 @@ class AttendanceController extends Controller
         $students = User::where('role', 'student')->with('departmentRelation')->get();
 
         // Only subjects assigned to this teacher
-        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
+        $subjects = Subject::where('teacher_id', $teacher->id)->get();
 
-        // Pass $subjects so Blade doesn’t break
-        $subjects = $teacherSubjects;
-
-        return view('teacher.attendance.create', compact('departments', 'students', 'teacherSubjects', 'subjects'));
+        return view('teacher.attendance.create', compact('departments', 'students', 'subjects'));
     }
 
     /**
@@ -62,21 +59,21 @@ class AttendanceController extends Controller
             'remarks' => 'nullable|string|max:500',
         ]);
 
-        Attendance::updateOrCreate(
-            [
-                'user_id' => $request->user_id,
-                'subject_id' => $request->subject_id,
-                'date' => $request->date,
-            ],
-            [
-                'teacher_id' => auth()->id(),
-                'department_id' => $request->department_id,
-                'attended' => $request->attended,
-                'total_classes' => $request->total_classes,
-                'status' => $request->status,
-                'remarks' => $request->remarks,
-            ]
-        );
+        // Use firstOrNew to ensure teacher_id is always set
+        $attendance = Attendance::firstOrNew([
+            'user_id' => $request->user_id,
+            'subject_id' => $request->subject_id,
+            'date' => $request->date,
+        ]);
+
+        $attendance->teacher_id = auth()->id();
+        $attendance->department_id = $request->department_id;
+        $attendance->attended = $request->attended;
+        $attendance->total_classes = $request->total_classes;
+        $attendance->status = $request->status;
+        $attendance->remarks = $request->remarks;
+
+        $attendance->save();
 
         return redirect()->route('teacher.attendance.index')
             ->with('success', 'Attendance marked successfully!');
@@ -89,9 +86,9 @@ class AttendanceController extends Controller
     {
         $departments = Department::all();
         $students = User::where('role', 'student')->with('departmentRelation')->get();
-        $teacherSubjects = Subject::where('teacher_id', auth()->id())->get();
+        $subjects = Subject::where('teacher_id', auth()->id())->get();
 
-        return view('teacher.attendance.edit', compact('attendance', 'departments', 'students', 'teacherSubjects'));
+        return view('teacher.attendance.edit', compact('attendance', 'departments', 'students', 'subjects'));
     }
 
     /**
@@ -110,7 +107,18 @@ class AttendanceController extends Controller
             'remarks' => 'nullable|string|max:500',
         ]);
 
-        $attendance->update($request->all());
+        // Ensure teacher_id remains intact
+        $attendance->update([
+            'user_id' => $request->user_id,
+            'subject_id' => $request->subject_id,
+            'teacher_id' => auth()->id(),
+            'department_id' => $request->department_id,
+            'attended' => $request->attended,
+            'total_classes' => $request->total_classes,
+            'status' => $request->status,
+            'remarks' => $request->remarks,
+            'date' => $request->date,
+        ]);
 
         return redirect()->route('teacher.attendance.index')
             ->with('success', 'Attendance updated successfully!');
@@ -134,14 +142,14 @@ class AttendanceController extends Controller
     {
         $teacher = auth()->user();
         $departments = Department::all();
-        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
+        $subjects = Subject::where('teacher_id', $teacher->id)->get();
 
         $studentsByDepartment = User::where('role', 'student')
             ->with('departmentRelation')
             ->get()
             ->groupBy('department');
 
-        return view('teacher.attendance.bulk', compact('departments', 'teacherSubjects', 'studentsByDepartment'));
+        return view('teacher.attendance.bulk', compact('departments', 'subjects', 'studentsByDepartment'));
     }
 
     /**
@@ -169,7 +177,8 @@ class AttendanceController extends Controller
             $attendance->teacher_id = auth()->id();
             $attendance->department_id = $request->department_id;
             $attendance->total_classes = ($attendance->total_classes ?? 0) + 1;
-            $attendance->attended = ($attendance->attended ?? 0) + ($record['status'] === 'present' || $record['status'] === 'late' ? 1 : 0);
+            $attendance->attended = ($attendance->attended ?? 0) +
+                (($record['status'] === 'present' || $record['status'] === 'late') ? 1 : 0);
             $attendance->status = $record['status'];
             $attendance->remarks = $record['remarks'] ?? null;
 
