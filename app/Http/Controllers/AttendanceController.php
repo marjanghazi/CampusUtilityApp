@@ -15,37 +15,36 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        // Get teacher's assigned subjects and departments
         $teacherId = auth()->id();
 
-        // For now, show all departments and subjects
-        $departments = Department::all();
+        // Get all subjects for dropdown
         $subjects = Subject::all();
-        $students = User::where('role', 'student')->with('departmentRelation')->get();
 
-        // Group students by department
-        $studentsByDepartment = $students->groupBy('department');
+        // Get all attendance records for this teacher with related user & subject
+        $attendances = Attendance::with(['user', 'subject'])
+            ->where('teacher_id', $teacherId)
+            ->get();
 
-        return view('teacher.attendance.index', compact('departments', 'subjects', 'students', 'studentsByDepartment'));
+        return view('teacher.attendance.index', compact('attendances', 'subjects'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new attendance record.
      */
     public function create()
     {
-        $teacher = auth()->user(); // fix: define the logged-in teacher
-        $subjects = Subject::all(); // make sure this line exists
-
+        $teacher = auth()->user();
         $departments = Department::all();
-        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
         $students = User::where('role', 'student')->with('departmentRelation')->get();
 
-        return view('teacher.attendance.create', compact('departments', 'subjects', 'students'));
+        // Only subjects assigned to this teacher
+        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
+
+        return view('teacher.attendance.create', compact('departments', 'teacherSubjects', 'students'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created attendance record.
      */
     public function store(Request $request)
     {
@@ -60,13 +59,14 @@ class AttendanceController extends Controller
             'remarks' => 'nullable|string|max:500',
         ]);
 
-        $attendance = Attendance::updateOrCreate(
+        Attendance::updateOrCreate(
             [
                 'user_id' => $request->user_id,
                 'subject_id' => $request->subject_id,
                 'date' => $request->date,
             ],
             [
+                'teacher_id' => auth()->id(),
                 'department_id' => $request->department_id,
                 'attended' => $request->attended,
                 'total_classes' => $request->total_classes,
@@ -80,27 +80,19 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Attendance $attendance)
-    {
-        return view('teacher.attendance.show', compact('attendance'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing a record.
      */
     public function edit(Attendance $attendance)
     {
         $departments = Department::all();
-        $subjects = Subject::all();
-        $students = User::where('role', 'student')->get();
+        $students = User::where('role', 'student')->with('departmentRelation')->get();
+        $teacherSubjects = Subject::where('teacher_id', auth()->id())->get();
 
-        return view('teacher.attendance.edit', compact('attendance', 'departments', 'subjects', 'students'));
+        return view('teacher.attendance.edit', compact('attendance', 'departments', 'students', 'teacherSubjects'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update a specific attendance record.
      */
     public function update(Request $request, Attendance $attendance)
     {
@@ -122,7 +114,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a record.
      */
     public function destroy(Attendance $attendance)
     {
@@ -133,15 +125,14 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Bulk attendance marking
+     * Bulk attendance form.
      */
     public function bulkCreate()
     {
-        $teacher = auth()->user(); // fix: define the logged-in teacher
+        $teacher = auth()->user();
         $departments = Department::all();
         $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
 
-        // Get students grouped by department
         $studentsByDepartment = User::where('role', 'student')
             ->with('departmentRelation')
             ->get()
@@ -151,7 +142,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Store bulk attendance
+     * Store bulk attendance.
      */
     public function bulkStore(Request $request)
     {
@@ -172,13 +163,10 @@ class AttendanceController extends Controller
                 'date' => $request->date,
             ]);
 
+            $attendance->teacher_id = auth()->id();
             $attendance->department_id = $request->department_id;
             $attendance->total_classes = ($attendance->total_classes ?? 0) + 1;
-
-            if ($record['status'] === 'present' || $record['status'] === 'late') {
-                $attendance->attended = ($attendance->attended ?? 0) + 1;
-            }
-
+            $attendance->attended = ($attendance->attended ?? 0) + ($record['status'] === 'present' || $record['status'] === 'late' ? 1 : 0);
             $attendance->status = $record['status'];
             $attendance->remarks = $record['remarks'] ?? null;
 
@@ -190,7 +178,7 @@ class AttendanceController extends Controller
     }
 
     /**
-     * Student: View their own attendance
+     * Student: view own attendance.
      */
     public function studentIndex()
     {
@@ -205,9 +193,6 @@ class AttendanceController extends Controller
         $overallPercentage = $totalClasses > 0 ? ($totalAttended / $totalClasses) * 100 : 0;
 
         $attendancesBySubject = $attendances->groupBy('subject.name');
-        $attendances = Attendance::with('user')
-            ->where('teacher_id', auth()->id())
-            ->get();
 
         return view('student.attendance', compact(
             'attendances',
@@ -215,8 +200,7 @@ class AttendanceController extends Controller
             'totalClasses',
             'totalAttended',
             'totalMissed',
-            'overallPercentage',
-            'attendances'
+            'overallPercentage'
         ));
     }
 }
