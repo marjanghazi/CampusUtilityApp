@@ -3,8 +3,8 @@
 @section('title', 'My Attendance')
 
 @php
-    $pageTitle = 'My Attendance';
-    $pageSubtitle = 'View your attendance records for all subjects';
+$pageTitle = 'My Attendance';
+$pageSubtitle = 'View your attendance records for all subjects';
 @endphp
 
 @section('content')
@@ -21,7 +21,7 @@
                 </div>
                 <div class="bg-white/20 p-3 rounded-full">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
             </div>
@@ -31,7 +31,7 @@
             <div class="flex items-center">
                 <div class="p-3 rounded-lg bg-green-100 text-green-600 mr-4">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
                 <div>
@@ -45,7 +45,7 @@
             <div class="flex items-center">
                 <div class="p-3 rounded-lg bg-red-100 text-red-600 mr-4">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </div>
                 <div>
@@ -64,7 +64,7 @@
                 <span class="text-sm text-gray-500">Last Updated: {{ now()->format('M d, Y') }}</span>
             </div>
         </div>
-        
+
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -92,27 +92,27 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($attendances as $attendance)
                     @php
-                        $missed = $attendance->total_classes - $attendance->attended;
-                        $percentage = $attendance->total_classes > 0 ? ($attendance->attended / $attendance->total_classes) * 100 : 0;
-                        
-                        $statusColor = $percentage >= 75 ? 'bg-green-100 text-green-800' : 
-                                      ($percentage >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
-                        $statusText = $percentage >= 75 ? 'Good' : 
-                                     ($percentage >= 50 ? 'Average' : 'Low');
+                    $missed = $attendance->total_classes - $attendance->attended;
+                    $percentage = $attendance->total_classes > 0 ? ($attendance->attended / $attendance->total_classes) * 100 : 0;
+
+                    $statusColor = $percentage >= 75 ? 'bg-green-100 text-green-800' :
+                    ($percentage >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
+                    $statusText = $percentage >= 75 ? 'Good' :
+                    ($percentage >= 50 ? 'Average' : 'Low');
                     @endphp
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
-                      <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-            <span class="text-blue-600 font-bold text-sm">
-                {{ strtoupper(substr($attendance->subject->name, 0, 1)) }}
-            </span>
-        </div>
-        <div class="text-sm font-medium text-gray-900">
-            {{ $attendance->subject->name }}
-        </div>
-    </div>
-</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                                    <span class="text-blue-600 font-bold text-sm">
+                                        {{ strtoupper(substr($attendance->subject->name, 0, 1)) }}
+                                    </span>
+                                </div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ $attendance->subject->name }}
+                                </div>
+                            </div>
+                        </td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">{{ $attendance->total_classes }}</div>
@@ -148,7 +148,7 @@
                         <td colspan="6" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
                                 <p class="text-gray-500 text-lg">No attendance records found.</p>
                                 <p class="text-gray-400 mt-2">Your attendance will appear here once marked by your teacher.</p>
@@ -187,19 +187,19 @@
             <ul class="space-y-3">
                 <li class="flex items-start">
                     <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <span>Aim for 75%+ attendance for good academic standing</span>
                 </li>
                 <li class="flex items-start">
                     <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <span>Regular attendance improves learning and grades</span>
                 </li>
                 <li class="flex items-start">
                     <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                     <span>Contact your teacher if you need to miss classes</span>
                 </li>
@@ -211,11 +211,11 @@
             <h4 class="text-lg font-semibold text-gray-800 mb-4">Attendance Trends</h4>
             <div class="space-y-4">
                 @php
-                    $trends = [
-                        ['subject' => 'Mathematics', 'change' => '+5%', 'direction' => 'up', 'color' => 'text-green-600'],
-                        ['subject' => 'Physics', 'change' => '+2%', 'direction' => 'up', 'color' => 'text-green-600'],
-                        ['subject' => 'Chemistry', 'change' => '-3%', 'direction' => 'down', 'color' => 'text-red-600'],
-                    ];
+                $trends = [
+                ['subject' => 'Mathematics', 'change' => '+5%', 'direction' => 'up', 'color' => 'text-green-600'],
+                ['subject' => 'Physics', 'change' => '+2%', 'direction' => 'up', 'color' => 'text-green-600'],
+                ['subject' => 'Chemistry', 'change' => '-3%', 'direction' => 'down', 'color' => 'text-red-600'],
+                ];
                 @endphp
                 @foreach($trends as $trend)
                 <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
@@ -228,11 +228,11 @@
                     <div class="flex items-center {{ $trend['color'] }}">
                         @if($trend['direction'] === 'up')
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                         </svg>
                         @else
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>
                         @endif
                         <span class="font-medium">{{ $trend['change'] }}</span>
