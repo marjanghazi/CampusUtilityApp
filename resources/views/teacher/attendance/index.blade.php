@@ -1,9 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Manage Attendance')
+
 @php
-    $attendances = $attendances ?? collect([]);
+$attendances = $attendances ?? collect([]);
+$subjects = $subjects ?? collect([]);
 @endphp
+
 @php
 $pageTitle = 'Manage Attendance';
 $pageSubtitle = 'Mark and manage student attendance';
@@ -36,18 +39,16 @@ $pageSubtitle = 'Mark and manage student attendance';
 
     <!-- Attendance Table -->
     <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-800">Attendance Records</h3>
-                <div class="flex space-x-2">
-                    <select class="border rounded-lg px-3 py-2 text-sm">
-                        <option>All Subjects</option>
-                        @foreach($subjects as $subject)
-                        <option>{{ $subject }}</option>
-                        @endforeach
-                    </select>
-                    <input type="date" class="border rounded-lg px-3 py-2 text-sm">
-                </div>
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-800">Attendance Records</h3>
+            <div class="flex space-x-2">
+                <select class="border rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Subjects</option>
+                    @foreach($subjects as $subject)
+                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                    @endforeach
+                </select>
+                <input type="date" class="border rounded-lg px-3 py-2 text-sm">
             </div>
         </div>
 
@@ -55,27 +56,13 @@ $pageSubtitle = 'Mark and manage student attendance';
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Student
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Subject
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Total Classes
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Attended
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Percentage
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Classes</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attended</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -102,7 +89,7 @@ $pageSubtitle = 'Mark and manage student attendance';
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $attendance->subject }}
+                            {{ $attendance->subject->name ?? 'N/A' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ $attendance->total_classes }}
@@ -111,18 +98,7 @@ $pageSubtitle = 'Mark and manage student attendance';
                             {{ $attendance->attended }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="w-24 bg-gray-200 rounded-full h-2.5 mr-3">
-                                    <!-- <div class="h-2.5 rounded-full 
-                                        {{ $percentage >= 75 ? 'bg-green-500' : 
-                                           ($percentage >= 50 ? 'bg-yellow-500' : 'bg-red-500') }}" 
-                                        style="width: {{ min($percentage, 100) }}%">
-                                    </div> -->
-                                </div>
-                                <span class="text-sm font-medium text-gray-900">
-                                    {{ number_format($percentage, 1) }}%
-                                </span>
-                            </div>
+                            <span class="text-sm font-medium text-gray-900">{{ number_format($percentage, 1) }}%</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusColor }}">
@@ -131,20 +107,15 @@ $pageSubtitle = 'Mark and manage student attendance';
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
-                                <a href="{{ route('teacher.attendance.edit', $attendance->id) }}"
-                                    class="text-blue-600 hover:text-blue-900">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
+                                <a href="{{ route('teacher.attendance.edit', $attendance->id) }}" class="text-blue-600 hover:text-blue-900">
+                                    Edit
                                 </a>
-<form action="{{ route('teacher.attendance.destroy', $attendance->id) }}" method="POST" class="inline">
+                                <form action="{{ route('teacher.attendance.destroy', $attendance->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-900"
                                         onclick="return confirm('Are you sure you want to delete this attendance record?')">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        Delete
                                     </button>
                                 </form>
                             </div>
@@ -152,37 +123,14 @@ $pageSubtitle = 'Mark and manage student attendance';
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                <p class="text-gray-500 text-lg">No attendance records found.</p>
-                                <p class="text-gray-400 mt-2">Start by marking attendance for students.</p>
-                                <a href="{{ route('teacher.attendance.create') }}"
-                                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Mark Attendance
-                                </a>
-                            </div>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            No attendance records found.
                         </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($attendances->count() > 0)
-        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex justify-between items-center">
-                <div class="text-sm text-gray-500">
-                    Showing <span class="font-medium">{{ $attendances->count() }}</span> records
-                </div>
-                <div>
-                    {{-- Pagination links if needed --}}
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
 </div>
 @endsection
