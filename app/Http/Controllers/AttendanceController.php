@@ -35,11 +35,13 @@ class AttendanceController extends Controller
     public function create()
     {
         $teacher = auth()->user(); // fix: define the logged-in teacher
+        $subjects = Subject::all(); // make sure this line exists
+
         $departments = Department::all();
         $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
         $students = User::where('role', 'student')->with('departmentRelation')->get();
 
-        return view('teacher.attendance.create', compact('departments', 'teacherSubjects', 'students'));
+        return view('teacher.attendance.create', compact('departments', 'subjects', 'students'));
     }
 
     /**

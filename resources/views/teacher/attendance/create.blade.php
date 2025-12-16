@@ -48,18 +48,18 @@ $pageSubtitle = 'Add attendance record';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Department <span class="text-red-500">*</span>
                     </label>
-                    <select id="departmentSelect" required
+                    <select name="department_id" id="departmentSelect" required
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Department</option>
                         @foreach($departments as $department)
-                        <option value="{{ $department->code }}">
+                        <option value="{{ $department->id }}">
                             {{ $department->name }} ({{ $department->code }})
                         </option>
                         @endforeach
                     </select>
                 </div>
 
-                {{-- Subject (teacher only) --}}
+                {{-- Subject --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Subject <span class="text-red-500">*</span>
@@ -67,9 +67,9 @@ $pageSubtitle = 'Add attendance record';
                     <select name="subject_id" id="subjectSelect" required
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Subject</option>
-                        @foreach($teacherSubjects as $subject)
+                        @foreach($subjects as $subject)
                         <option value="{{ $subject->id }}"
-                            data-department="{{ $subject->department->code }}">
+                            data-department="{{ $subject->department->id ?? '' }}">
                             {{ $subject->name }} ({{ $subject->code }})
                         </option>
                         @endforeach
@@ -81,14 +81,13 @@ $pageSubtitle = 'Add attendance record';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Student <span class="text-red-500">*</span>
                     </label>
-                    <select name="student_id" id="studentSelect" required
+                    <select name="user_id" id="studentSelect" required
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Student</option>
                         @foreach($students as $student)
                         <option value="{{ $student->id }}"
                             data-department="{{ $student->department }}">
-                            {{ $student->name }}
-                            ({{ $student->roll_number ?? 'N/A' }}) – {{ $student->department }}
+                            {{ $student->name }} ({{ $student->roll_number ?? 'N/A' }}) – {{ $student->department }}
                         </option>
                         @endforeach
                     </select>
@@ -115,6 +114,26 @@ $pageSubtitle = 'Add attendance record';
                         <option value="absent">Absent</option>
                         <option value="late">Late</option>
                     </select>
+                </div>
+
+                {{-- Classes Attended --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Classes Attended <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="attended" min="0" value="1" required
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500"
+                        placeholder="Enter number of classes attended">
+                </div>
+
+                {{-- Total Classes --}}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Total Classes <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" name="total_classes" min="1" value="1" required
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500"
+                        placeholder="Enter total number of classes">
                 </div>
 
                 {{-- Remarks --}}
@@ -146,24 +165,23 @@ $pageSubtitle = 'Add attendance record';
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
         const departmentSelect = document.getElementById('departmentSelect');
         const subjectSelect = document.getElementById('subjectSelect');
         const studentSelect = document.getElementById('studentSelect');
 
         departmentSelect.addEventListener('change', () => {
-            const dept = departmentSelect.value;
+            const deptId = departmentSelect.value;
 
-            // Filter subjects
+            // Filter subjects by department
             Array.from(subjectSelect.options).forEach(opt => {
                 if (!opt.value) return;
-                opt.hidden = opt.dataset.department !== dept;
+                opt.hidden = opt.dataset.department !== deptId;
             });
 
-            // Filter students
+            // Filter students by department
             Array.from(studentSelect.options).forEach(opt => {
                 if (!opt.value) return;
-                opt.hidden = opt.dataset.department !== dept;
+                opt.hidden = opt.dataset.department !== deptId;
             });
 
             subjectSelect.value = '';
