@@ -17,15 +17,15 @@ class AttendanceController extends Controller
     {
         // Get teacher's assigned subjects and departments
         $teacherId = auth()->id();
-        
+
         // For now, show all departments and subjects
         $departments = Department::all();
         $subjects = Subject::all();
         $students = User::where('role', 'student')->with('departmentRelation')->get();
-        
+
         // Group students by department
         $studentsByDepartment = $students->groupBy('department');
-        
+
         return view('teacher.attendance.index', compact('departments', 'subjects', 'students', 'studentsByDepartment'));
     }
 
@@ -34,11 +34,12 @@ class AttendanceController extends Controller
      */
     public function create()
     {
+        $teacher = auth()->user(); // fix: define the logged-in teacher
         $departments = Department::all();
-        $subjects = Subject::all();
+        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
         $students = User::where('role', 'student')->with('departmentRelation')->get();
-        
-        return view('teacher.attendance.create', compact('departments', 'subjects', 'students'));
+
+        return view('teacher.attendance.create', compact('departments', 'teacherSubjects', 'students'));
     }
 
     /**
@@ -92,7 +93,7 @@ class AttendanceController extends Controller
         $departments = Department::all();
         $subjects = Subject::all();
         $students = User::where('role', 'student')->get();
-        
+
         return view('teacher.attendance.edit', compact('attendance', 'departments', 'subjects', 'students'));
     }
 
@@ -134,16 +135,17 @@ class AttendanceController extends Controller
      */
     public function bulkCreate()
     {
+        $teacher = auth()->user(); // fix: define the logged-in teacher
         $departments = Department::all();
-        $subjects = Subject::all();
-        
+        $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
+
         // Get students grouped by department
-        $students = User::where('role', 'student')
+        $studentsByDepartment = User::where('role', 'student')
             ->with('departmentRelation')
             ->get()
             ->groupBy('department');
-        
-        return view('teacher.attendance.bulk', compact('departments', 'subjects', 'students'));
+
+        return view('teacher.attendance.bulk', compact('departments', 'teacherSubjects', 'studentsByDepartment'));
     }
 
     /**
@@ -162,24 +164,22 @@ class AttendanceController extends Controller
         ]);
 
         foreach ($request->attendance as $record) {
-            // Find existing attendance record for this student on this date and subject
             $attendance = Attendance::firstOrNew([
                 'user_id' => $record['student_id'],
                 'subject_id' => $request->subject_id,
                 'date' => $request->date,
             ]);
 
-            // Update attendance counts
             $attendance->department_id = $request->department_id;
             $attendance->total_classes = ($attendance->total_classes ?? 0) + 1;
-            
+
             if ($record['status'] === 'present' || $record['status'] === 'late') {
                 $attendance->attended = ($attendance->attended ?? 0) + 1;
             }
-            
+
             $attendance->status = $record['status'];
             $attendance->remarks = $record['remarks'] ?? null;
-            
+
             $attendance->save();
         }
 
@@ -196,19 +196,17 @@ class AttendanceController extends Controller
         $attendances = Attendance::where('user_id', $studentId)
             ->with(['subject', 'department'])
             ->get();
-        
-        // Calculate overall statistics
+
         $totalClasses = $attendances->sum('total_classes');
         $totalAttended = $attendances->sum('attended');
         $totalMissed = $totalClasses - $totalAttended;
         $overallPercentage = $totalClasses > 0 ? ($totalAttended / $totalClasses) * 100 : 0;
-        
-        // Group by subject
+
         $attendancesBySubject = $attendances->groupBy('subject.name');
-           $attendances = Attendance::with('user')
-        ->where('teacher_id', auth()->id())
-        ->get();
-        
+        $attendances = Attendance::with('user')
+            ->where('teacher_id', auth()->id())
+            ->get();
+
         return view('student.attendance', compact(
             'attendances',
             'attendancesBySubject',
@@ -217,7 +215,6 @@ class AttendanceController extends Controller
             'totalMissed',
             'overallPercentage',
             'attendances'
-
         ));
     }
 }
