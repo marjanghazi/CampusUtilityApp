@@ -40,7 +40,10 @@ class AttendanceController extends Controller
         // Only subjects assigned to this teacher
         $teacherSubjects = Subject::where('teacher_id', $teacher->id)->get();
 
-        return view('teacher.attendance.create', compact('departments', 'teacherSubjects', 'students'));
+        // Pass $subjects so Blade doesn’t break
+        $subjects = $teacherSubjects;
+
+        return view('teacher.attendance.create', compact('departments', 'students', 'teacherSubjects', 'subjects'));
     }
 
     /**
