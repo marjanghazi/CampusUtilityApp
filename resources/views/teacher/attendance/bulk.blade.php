@@ -3,8 +3,8 @@
 @section('title', 'Bulk Attendance Marking')
 
 @php
-    $pageTitle = 'Bulk Attendance Marking';
-    $pageSubtitle = 'Mark attendance for multiple students at once';
+$pageTitle = 'Bulk Attendance Marking';
+$pageSubtitle = 'Mark attendance for multiple students at once';
 @endphp
 
 @section('content')
@@ -18,10 +18,10 @@
                 <p class="text-gray-600">Mark attendance for students</p>
             </div>
             <a href="{{ route('teacher.attendance.create') }}"
-               class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 4v16m8-8H4"/>
+                        d="M12 4v16m8-8H4" />
                 </svg>
                 Single Marking
             </a>
@@ -29,9 +29,9 @@
 
         {{-- Error --}}
         @if(session('error'))
-            <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                {{ session('error') }}
-            </div>
+        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+            {{ session('error') }}
+        </div>
         @endif
 
         <form action="{{ route('teacher.attendance.bulk.store') }}" method="POST">
@@ -46,12 +46,12 @@
                         Department <span class="text-red-500">*</span>
                     </label>
                     <select id="departmentSelect" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Department</option>
                         @foreach($departments as $department)
-                            <option value="{{ $department->code }}">
-                                {{ $department->name }} ({{ $department->code }})
-                            </option>
+                        <option value="{{ $department->code }}">
+                            {{ $department->name }} ({{ $department->code }})
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -62,13 +62,13 @@
                         Subject <span class="text-red-500">*</span>
                     </label>
                     <select name="subject_id" id="subjectSelect" required
-                            class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Subject</option>
                         @foreach($teacherSubjects as $subject)
-                            <option value="{{ $subject->id }}"
-                                    data-department="{{ $subject->department->code }}">
-                                {{ $subject->name }} ({{ $subject->code }})
-                            </option>
+                        <option value="{{ $subject->id }}"
+                            data-department="{{ $subject->department->code }}">
+                            {{ $subject->name }} ({{ $subject->code }})
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -79,8 +79,8 @@
                         Date <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="date" required
-                           value="{{ now()->format('Y-m-d') }}"
-                           class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
+                        value="{{ now()->format('Y-m-d') }}"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                 </div>
             </div>
 
@@ -91,28 +91,28 @@
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                Roll No
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                Student
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                Status
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                Remarks
-                            </th>
-                        </tr>
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Roll No
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Student
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Status
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                    Remarks
+                                </th>
+                            </tr>
                         </thead>
 
                         <tbody id="studentsContainer" class="bg-white divide-y divide-gray-200">
-                        <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
-                                Select department & subject
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                    Select department & subject
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -121,11 +121,11 @@
             {{-- Actions --}}
             <div class="flex justify-end space-x-3 border-t pt-6">
                 <a href="{{ route('teacher.attendance.index') }}"
-                   class="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">
+                    class="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">
                     Cancel
                 </a>
                 <button type="submit"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                     Save Attendance
                 </button>
             </div>
@@ -135,47 +135,47 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
 
-    const departmentSelect = document.getElementById('departmentSelect');
-    const subjectSelect = document.getElementById('subjectSelect');
-    const studentsContainer = document.getElementById('studentsContainer');
+        const departmentSelect = document.getElementById('departmentSelect');
+        const subjectSelect = document.getElementById('subjectSelect');
+        const studentsContainer = document.getElementById('studentsContainer');
 
-    // ✅ TS-safe JSON parsing
-    const studentsByDepartment = JSON.parse(
-        document.getElementById('students-data').textContent || '{}'
-    );
+        // ✅ TS-safe JSON parsing
+        const studentsByDepartment = JSON.parse(
+            document.getElementById('students-data').textContent || '{}'
+        );
 
-    departmentSelect.addEventListener('change', () => {
-        const dept = departmentSelect.value;
+        departmentSelect.addEventListener('change', () => {
+            const dept = departmentSelect.value;
 
-        // Filter subjects by department
-        Array.from(subjectSelect.options).forEach(option => {
-            if (!option.value) return;
-            option.hidden = option.dataset.department !== dept;
+            // Filter subjects by department
+            Array.from(subjectSelect.options).forEach(option => {
+                if (!option.value) return;
+                option.hidden = option.dataset.department !== dept;
+            });
+
+            subjectSelect.value = '';
+            studentsContainer.innerHTML = emptyRow('Select subject');
         });
 
-        subjectSelect.value = '';
-        studentsContainer.innerHTML = emptyRow('Select subject');
-    });
+        subjectSelect.addEventListener('change', () => {
+            loadStudents(departmentSelect.value);
+        });
 
-    subjectSelect.addEventListener('change', () => {
-        loadStudents(departmentSelect.value);
-    });
+        function loadStudents(departmentCode) {
+            const students = studentsByDepartment[departmentCode] || [];
 
-    function loadStudents(departmentCode) {
-        const students = studentsByDepartment[departmentCode] || [];
+            studentsContainer.innerHTML = '';
 
-        studentsContainer.innerHTML = '';
+            if (students.length === 0) {
+                studentsContainer.innerHTML = emptyRow('No students found');
+                return;
+            }
 
-        if (students.length === 0) {
-            studentsContainer.innerHTML = emptyRow('No students found');
-            return;
-        }
-
-        students.forEach((student, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+            students.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                 <td class="px-6 py-4">
                     ${student.roll_number ?? 'N/A'}
                 </td>
@@ -201,20 +201,20 @@ document.addEventListener('DOMContentLoaded', () => {
                            placeholder="Optional">
                 </td>
             `;
-            studentsContainer.appendChild(row);
-        });
-    }
+                studentsContainer.appendChild(row);
+            });
+        }
 
-    function emptyRow(message) {
-        return `
+        function emptyRow(message) {
+            return `
             <tr>
                 <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                     ${message}
                 </td>
             </tr>
         `;
-    }
-});
+        }
+    });
 </script>
 
 @endpush
