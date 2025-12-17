@@ -43,14 +43,14 @@ $pageSubtitle = 'Add attendance record';
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {{-- Department --}}
+                {{-- Department (Optional) --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Department <span class="text-red-500">*</span>
+                        Department
                     </label>
-                    <select name="department_id" id="departmentSelect" required
+                    <select name="department_id"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
-                        <option value="">Select Department</option>
+                        <option value="">Select Department (Optional)</option>
                         @foreach($departments as $department)
                         <option value="{{ $department->id }}">
                             {{ $department->name }} ({{ $department->code }})
@@ -64,12 +64,11 @@ $pageSubtitle = 'Add attendance record';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Subject <span class="text-red-500">*</span>
                     </label>
-                    <select name="subject_id" id="subjectSelect" required
+                    <select name="subject_id" required
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Subject</option>
                         @foreach($subjects as $subject)
-                        <option value="{{ $subject->id }}"
-                            data-department="{{ $subject->department->id ?? '' }}">
+                        <option value="{{ $subject->id }}">
                             {{ $subject->name }} ({{ $subject->code }})
                         </option>
                         @endforeach
@@ -81,13 +80,12 @@ $pageSubtitle = 'Add attendance record';
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Student <span class="text-red-500">*</span>
                     </label>
-                    <select name="user_id" id="studentSelect" required
+                    <select name="user_id" required
                         class="w-full border rounded-lg px-4 py-2 focus:ring-blue-500">
                         <option value="">Select Student</option>
                         @foreach($students as $student)
-                        <option value="{{ $student->id }}"
-                            data-department="{{ $student->department }}">
-                            {{ $student->name }} ({{ $student->roll_number ?? 'N/A' }}) – {{ $student->department }}
+                        <option value="{{ $student->id }}">
+                            {{ $student->name }} ({{ $student->roll_number ?? 'N/A' }})
                         </option>
                         @endforeach
                     </select>
@@ -161,33 +159,4 @@ $pageSubtitle = 'Add attendance record';
         </form>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const departmentSelect = document.getElementById('departmentSelect');
-        const subjectSelect = document.getElementById('subjectSelect');
-        const studentSelect = document.getElementById('studentSelect');
-
-        departmentSelect.addEventListener('change', () => {
-            const deptId = departmentSelect.value;
-
-            // Filter subjects by department
-            Array.from(subjectSelect.options).forEach(opt => {
-                if (!opt.value) return;
-                opt.hidden = opt.dataset.department !== deptId;
-            });
-
-            // Filter students by department
-            Array.from(studentSelect.options).forEach(opt => {
-                if (!opt.value) return;
-                opt.hidden = opt.dataset.department !== deptId;
-            });
-
-            subjectSelect.value = '';
-            studentSelect.value = '';
-        });
-    });
-</script>
-@endpush
 @endsection
